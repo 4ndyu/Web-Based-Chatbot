@@ -11,7 +11,6 @@ messages.append({ "role" : "system", "content" : "You are a cake recipe book, yo
 
 while True:
     
-
     # Send the api call
     response = openai.ChatCompletion.create( model="gpt-3.5-turbo", messages=messages )
 
