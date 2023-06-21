@@ -1,4 +1,5 @@
 import openai
+import gradio
 
 # Reads a txt file that contains the API key
 apiKey = open(".apikey", "r")
@@ -8,24 +9,27 @@ openai.api_key = apiKey.read()
 messages = []
 messages.append({ "role" : "system", "content" : "You are a cake recipe book, you ask the user what cake they want to make and respond back with the recipe for that cake." })
 
+def respond(history, new_message):
 
-while True:
-    
+    # Add the user input to the messages
+    messages.append({ "role" : "user", "content" : new_message })
+
     # Send the api call
     response = openai.ChatCompletion.create( model="gpt-3.5-turbo", messages=messages )
 
-    # Display response in console
-    print(response.choices[0].message.content)
+    # Obtain response text
+    assistant_message = response.choices[0].message
 
     # Expanding the conservation
-    messages.append(response.choices[0].message)
+    messages.append(assistant_message)
 
-    # Capture user input
-    user_input = input("Enter your answer: ")
+    return history + [[new_message, assistant_message.content]]
 
-    # Quit loop if user presses 'q'
-    if user_input == 'q':
-        exit()
+with gradio.Blocks() as chat_bot:
 
-    # Prop preparation
-    messages.append({ "role" : "user", "content" : user_input })
+    chatbot = gradio.Chatbot()
+    user_input = gradio.Text()
+
+    user_input.submit(respond, [chatbot, user_input], chatbot)
+
+chat_bot.launch()
