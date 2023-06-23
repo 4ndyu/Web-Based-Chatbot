@@ -1,10 +1,8 @@
 import openai
 import gradio
+import os
 
-# Reads a txt file that contains the API key
-apiKey = open(".apikey", "r")
-
-openai.api_key = apiKey.read()
+openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 messages = []
 messages.append({ "role" : "system", "content" : "You are a cake recipe book, you ask the user what cake they want to make and respond back with the recipe for that cake." })
